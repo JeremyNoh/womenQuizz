@@ -24,8 +24,6 @@ import {
 } from "../../api/auth";
 import { Loading } from "../components/Loading";
 
-import firebase from "firebase";
-import { FIREBASE_CONFIG } from "../../api/configure";
 import { saveInfo } from "../../utils/functionNative";
 // import firestore from "firebase/firestore";
 
@@ -52,8 +50,6 @@ class Auth extends React.Component {
 
   componentDidMount() {
     // this.props.navigation.navigate("Home");
-    firebase.initializeApp(FIREBASE_CONFIG);
-    let database = firebase.database();
   }
 
   // SWITCH INTO SIGNIN | SIGNUP
