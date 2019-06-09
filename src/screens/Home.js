@@ -54,10 +54,10 @@ class Home extends Component {
                 height: 270,
                 borderColor: "black",
                 borderRadius: 140,
-                borderWidth: 1,
-                backgroundColor: BUTTON_COLOR_ONE
+                borderWidth: 1
+                // backgroundColor: BUTTON_COLOR_ONE
               }}
-              source={require("../../assets/search.png")}
+              source={require("../../assets/businesswoman.png")}
             />
           </TouchableOpacity>
         </Container>
