@@ -7,7 +7,7 @@
 
 Le but de ce projet est de créer un Jeu Mobile sous forme de Questionnaire sur les femmes populaires de l'histoire
 
-Pour Avoir Accès à toutes les personnalités féminines j'ai consommé une API dispo : [içi](<[https://github.com/cindyDLF/100-Women-of-History-Api](https://github.com/cindyDLF/100-Women-of-History-Api)>)
+Pour Avoir Accès à toutes les personnalités féminines j'ai consommé une API dispo : [içi](https://github.com/cindyDLF/100-Women-of-History-Api)
 
 ## Fonctionnalités
 
