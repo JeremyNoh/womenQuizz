@@ -6,7 +6,8 @@ import {
   Text,
   View,
   AsyncStorage,
-  Image
+  Image,
+  Alert
 } from "react-native";
 
 // Internal Component
@@ -27,7 +28,7 @@ import Container from "../components/Container";
 import { getInfoUser } from "../../api/auth";
 import { updateScoreUser } from "../../api/user";
 import { shuffleArray } from "../../utils/functionNative";
-const NBR_QUESTION_IN_QUIZZ = 7;
+const NBR_QUESTION_IN_QUIZZ = 6;
 
 export default class Play extends Component {
   constructor(props) {
@@ -186,6 +187,22 @@ export default class Play extends Component {
     return <Title title="No data sorry " />;
   };
 
+  _easterEggs = () => {
+    let { infoUser } = this.state;
+    infoUser.findEasterEggs = true;
+    let today = new Date();
+
+    let date = today.toLocaleDateString("fr-FR");
+    infoUser.dateFindEasterEggs = date;
+    updateScoreUser(infoUser.id, infoUser)
+      .then(val => {})
+      .catch(val => {
+        alert(val);
+      });
+
+    Alert.alert("Pour notre 10ème..🤗", "Un séjour ? 😘", [{ text: "OK" }]);
+  };
+
   gameLost = () => {
     let { gameStop, goodAnswser, numberQuestion } = this.state;
     return (
@@ -245,19 +262,25 @@ export default class Play extends Component {
         >
           {this.state.life.map((val, index) => {
             return (
-              <Image
+              <TouchableOpacity
                 key={index}
-                style={{
-                  width: 30,
-                  height: 30,
-                  margin: 10
-                }}
-                source={
-                  val === true
-                    ? require("../../assets/like.png")
-                    : require("../../assets/likeEmpty.png")
-                }
-              />
+                disabled={index !== 1}
+                onPress={() => this._easterEggs()}
+              >
+                <Image
+                  key={index}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    margin: 10
+                  }}
+                  source={
+                    val === true
+                      ? require("../../assets/like.png")
+                      : require("../../assets/likeEmpty.png")
+                  }
+                />
+              </TouchableOpacity>
             );
           })}
         </View>
