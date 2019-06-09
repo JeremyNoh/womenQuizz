@@ -1,6 +1,6 @@
 import React from "react";
 
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet, TextInput, Alert } from "react-native";
 
 // Internal Component
 import {
@@ -102,7 +102,11 @@ class Auth extends React.Component {
     addUserInDatabase(dataUser)
       .then(val => {
         // Redirection
-        this.props.navigation.navigate("Home");
+        Alert.alert(
+          "Inscription réussi",
+          "Je t'invite à te connecter pour commencer à jouer",
+          [{ text: "OK" }]
+        );
       })
       .catch(val => {
         alert(val);

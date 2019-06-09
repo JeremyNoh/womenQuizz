@@ -2,14 +2,10 @@ import { LOGIN, BASE_URL, REGISTER, USER } from "../endpoint";
 import firebase from "firebase";
 
 export const loginUser = async (email, password) => {
-  console.log("email ", email);
-
   try {
     const value = await firebase
       .auth()
       .signInWithEmailAndPassword(email, password);
-    // console.log(value.user.stsTokenManager.expirationTime);
-    console.log(value.user);
     let data = {
       email: value.user.email,
       token: value.user.lastLoginAt,

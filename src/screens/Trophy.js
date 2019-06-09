@@ -26,7 +26,7 @@ class Trophy extends React.Component {
   state = {
     infoUser: undefined,
     deck: undefined,
-    women: undefined,
+    women: [],
     detailWoman: false,
     idDetail: undefined
   };
@@ -42,10 +42,7 @@ class Trophy extends React.Component {
         let deck = [];
 
         if (infoUser.women !== undefined) {
-          deck = infoUser.women.split("-");
-          deck = deck.map(function(x) {
-            return parseInt(x, 10);
-          });
+          deck = JSON.parse(infoUser.women);
         }
 
         this.setState({ infoUser, deck });

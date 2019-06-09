@@ -115,12 +115,9 @@ export default class Play extends Component {
     let women;
     let isOk = true;
     if (infoUser.women === undefined) {
-      women = id;
+      women = [id];
     } else {
-      let deck = infoUser.women.split("-");
-      deck = deck.map(function(x) {
-        return parseInt(x, 10);
-      });
+      let deck = JSON.parse(infoUser.women);
       let nbr = 0;
       while (deck.includes(id)) {
         id = quizArr[Math.floor(Math.random() * quizArr.length)].id;
@@ -132,11 +129,11 @@ export default class Play extends Component {
         }
       }
 
-      women = infoUser.women + "-" + id;
+      women = [...deck, id];
     }
 
     if (isOk) {
-      infoUser.women = women;
+      infoUser.women = JSON.stringify(women);
       updateScoreUser(infoUser.id, infoUser)
         .then(val => {})
         .catch(val => {
