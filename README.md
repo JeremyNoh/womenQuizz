@@ -73,8 +73,8 @@ ENJOY 🙂
 
 - [Jeremy Noh](https://github.com/JeremyNoh)
 
-      	#### Cliente
-      	- [Cindy De La Fuente]([https://github.com/cindyDLF](https://github.com/cindyDLF))
-      		 ( qui a eu l'idée de ce projet et que je remercie pour le scrapping et la mise en place de l'api des personnalités )
+  ### Cliente
+  - [Cindy De La Fuente](https://github.com/cindyDLF)
+   ( qui a eu l'idée de ce projet et que je remercie pour le scrapping et la mise en place de l'api des personnalités )
 
 Merci à vous
