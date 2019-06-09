@@ -3,6 +3,8 @@
 > **Note:** Apprendre en S'amusant !
 > Voici un petit résumer pour ce mini jeu
 
+![womenQuizz](assets/Tile.png "this is the name Of the Project")
+
 ## Présentation
 
 Le but de ce projet est de créer un Jeu Mobile sous forme de Questionnaire sur les femmes populaires de l'histoire
@@ -74,7 +76,8 @@ ENJOY 🙂
 - [Jeremy Noh](https://github.com/JeremyNoh)
 
   ### Cliente
+
   - [Cindy De La Fuente](https://github.com/cindyDLF)
-   ( qui a eu l'idée de ce projet et que je remercie pour le scrapping et la mise en place de l'api des personnalités )
+    ( qui a eu l'idée de ce projet et que je remercie pour le scrapping et la mise en place de l'api des personnalités )
 
 Merci à vous
