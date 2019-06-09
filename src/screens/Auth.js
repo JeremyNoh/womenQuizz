@@ -32,10 +32,9 @@ import { saveInfo } from "../../utils/functionNative";
 class Auth extends React.Component {
   state = {
     user: {
-      email: "jeremy@gmail.com",
-      username: "jeremy",
-      password: "Azert12345",
-      confirmPassword: "Azert12345"
+      email: "",
+      username: "",
+      password: ""
     },
     selectedIndex: 0
   };
@@ -219,7 +218,7 @@ class Auth extends React.Component {
           secureTextEntry={true}
           onChangeText={val => this.updateStateHandler("password", val)}
         />
-        <TextInput
+        {/* <TextInput
           style={styles.TextInput}
           placeholderTextColor={BUTTON_COLOR_ONE}
           value={user.confirmPassword}
@@ -227,7 +226,7 @@ class Auth extends React.Component {
           secureTextEntry={false}
           autoCorrect={false}
           onChangeText={val => this.updateStateHandler("confirmPassword", val)}
-        />
+        /> */}
 
         <Button
           onPress={() => this._signUp()}
@@ -237,7 +236,6 @@ class Auth extends React.Component {
             !(
               user.username.length >= 1 &&
               user.password.length >= 5 &&
-              user.confirmPassword === user.password &&
               this._validateEmail(user.email)
             )
           }
