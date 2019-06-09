@@ -235,9 +235,8 @@ class Auth extends React.Component {
           title="S'enregistrer"
           disabled={
             !(
-              user.username.length >= 6 &&
-              user.password.length >= 6 &&
-              user.password.length >= 6 &&
+              user.username.length >= 1 &&
+              user.password.length >= 5 &&
               user.confirmPassword === user.password &&
               this._validateEmail(user.email)
             )

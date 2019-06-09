@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 
 import {
   StyleSheet,
@@ -16,7 +16,7 @@ import Container from "../components/Container";
 import Title from "../components/Title";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-class Home extends React.Component {
+class Home extends Component {
   componentDidMount() {
     // this.props.navigation.navigate("Play");
   }

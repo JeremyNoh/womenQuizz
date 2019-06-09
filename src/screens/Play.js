@@ -5,15 +5,12 @@ import {
   TouchableOpacity,
   Text,
   View,
-  AsyncStorage
+  AsyncStorage,
+  Image
 } from "react-native";
 
 // Internal Component
-import {
-  BACKGROUND_HEADER,
-  TEXT_HEADER,
-  BUTTON_COLOR_ONE
-} from "../../utils/colors";
+import { BUTTON_COLOR_ONE } from "../../utils/colors";
 import Title from "../components/Title";
 
 import { Loading } from "../components/Loading";
@@ -21,17 +18,16 @@ import { Loading } from "../components/Loading";
 // Libs Extenal
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import { Button, Overlay } from "react-native-elements";
+import { Button, Overlay, Header } from "react-native-elements";
 import * as Progress from "react-native-progress";
 import Toast, { DURATION } from "react-native-easy-toast";
 
 import { getAllWomen } from "../../api/women";
 import Container from "../components/Container";
 import { getInfoUser } from "../../api/auth";
-import { FIREBASE_CONFIG } from "../../api/configure";
 import { updateScoreUser } from "../../api/user";
 import { shuffleArray } from "../../utils/functionNative";
-const NBR_QUESTION_IN_QUIZZ = 4;
+const NBR_QUESTION_IN_QUIZZ = 7;
 
 export default class Play extends Component {
   constructor(props) {
@@ -40,7 +36,9 @@ export default class Play extends Component {
       quizArr: [],
       numberQuestion: 0,
       goodAnswser: 0,
-      gameFinish: false
+      gameFinish: false,
+      gameStop: false,
+      life: [true, true, true]
     };
   }
 
@@ -60,6 +58,7 @@ export default class Play extends Component {
       });
   }
 
+  // enlève dans la Questions le nom ou Prenom de la Femme
   _formatDescription = (description, name) => {
     let regex = new RegExp(name, "gi");
     let newStr = description;
@@ -75,6 +74,7 @@ export default class Play extends Component {
     return newStr;
   };
 
+  // mets en forme le Questionnaire
   fetchQuestions = () => {
     let res;
     getAllWomen()
@@ -108,6 +108,22 @@ export default class Play extends Component {
       });
   };
 
+  // retire une vie du Player
+  takeAlife = () => {
+    let { life } = this.state;
+
+    if (life.includes(true)) {
+      let index = life.lastIndexOf(true);
+
+      life[index] = false;
+    } else {
+      this.setState({ gameStop: true });
+    }
+
+    this.setState({ life });
+  };
+
+  // ajoute une card WOmen dans le deck du Player
   sendScore = () => {
     let { quizArr, infoUser } = this.state;
     let id = quizArr[Math.floor(Math.random() * quizArr.length)].id;
@@ -144,9 +160,15 @@ export default class Play extends Component {
 
   next(correctAnswer, indexValue, lengthQuizz) {
     let { goodAnswser, numberQuestion } = this.state;
+
+    // rajoute une bonne Réponse
     correctAnswer === indexValue &&
       this.setState({ goodAnswser: 1 + goodAnswser });
 
+    // retire une vie du PLayer
+    correctAnswer !== indexValue && this.takeAlife();
+
+    // affiche le popup Good | bad Answer
     correctAnswer === indexValue
       ? this.refs.good.show("Good Answer", 300)
       : this.refs.bad.show("Bad Answer", 300);
@@ -164,6 +186,39 @@ export default class Play extends Component {
     return <Title title="No data sorry " />;
   };
 
+  gameLost = () => {
+    let { gameStop, goodAnswser, numberQuestion } = this.state;
+    return (
+      <Overlay
+        isVisible={gameStop}
+        overlayBackgroundColor="white"
+        overlayStyle={{}}
+        onBackdropPress={() => this.props.navigation.navigate("Home")}
+      >
+        <Container>
+          <Title
+            title="Tu as perdu"
+            style={{ color: "rgba(255, 0, 0, 0.5)" }}
+          />
+          <Image
+            style={{
+              width: 100,
+              height: 100,
+              margin: 10
+            }}
+            source={require("../../assets/sad.png")}
+          />
+          <Text style={{ margin: 10, fontSize: 15, marginBottom: 30 }}>
+            tu as un score de : {goodAnswser} sur {numberQuestion}
+          </Text>
+          <Button
+            title="Revenir à l'accueil "
+            onPress={() => this.props.navigation.navigate("Home")}
+          />
+        </Container>
+      </Overlay>
+    );
+  };
   render() {
     const { quizArr, numberQuestion, gameFinish, goodAnswser } = this.state;
 
@@ -178,90 +233,136 @@ export default class Play extends Component {
     }
 
     return (
-      <View
-        style={{
-          flex: 1,
-          paddingHorizontal: 1,
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "stretch",
-          backgroundColor: "#252C4A"
-        }}
-      >
-        {quizArr &&
-          quizArr.map((element, index) => {
-            let arr = [...element.incorrect_answers];
-            let random = Math.floor(Math.random() * 2 - 1 + 1);
-            arr.splice(random, 0, element.correct_answer);
-            arr = shuffleArray(arr);
-
+      <>
+        <Header backgroundColor="#252C4A" />
+        <View
+          style={{
+            backgroundColor: "#252C4A",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center"
+          }}
+        >
+          {this.state.life.map((val, index) => {
             return (
-              index === numberQuestion && (
-                <View key={index} style={styles.container}>
-                  <Text
-                    style={{
-                      backgroundColor: "white",
-                      padding: 8,
-                      marginBottom: 10,
-                      width: "40%",
-                      fontSize: 17,
-                      color: "black",
-                      fontWeight: "bold",
-                      borderRadius: 10,
-                      textAlign: "center",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      alignSelf: "center"
-                    }}
-                  >
-                    Question # {index + 1}
-                  </Text>
-
-                  <Text style={styles.quizQ}>{element.question}</Text>
-                  {arr.map((b, n) => {
-                    return (
-                      <TouchableOpacity
-                        key={n}
-                        onPress={() =>
-                          this.next(
-                            element.correct_answer,
-                            b,
-                            quizArr.length - 1
-                          )
-                        }
-                        style={styles.nxtBtn}
-                      >
-                        <Text style={styles.btnTxt}>{b}</Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-              )
+              <Image
+                key={index}
+                style={{
+                  width: 30,
+                  height: 30,
+                  margin: 10
+                }}
+                source={
+                  val === true
+                    ? require("../../assets/like.png")
+                    : require("../../assets/likeEmpty.png")
+                }
+              />
             );
           })}
-        <Overlay
-          isVisible={gameFinish}
-          windowBackgroundColor="rgba(255, 255, 255, .5)"
-          overlayBackgroundColor="white"
-          onBackdropPress={() => this.props.navigation.navigate("Home")}
+        </View>
+        <View
+          style={{
+            flex: 1,
+            paddingHorizontal: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "stretch",
+            backgroundColor: "#252C4A"
+          }}
         >
-          <Container>
-            <Title title="Félicitation" style={{ color: BUTTON_COLOR_ONE }} />
-            <Text style={{ margin: 10 }}>
-              tu as un score de : {goodAnswser} sur {numberQuestion}
-            </Text>
-            <Button
-              title="Go to Home"
-              onPress={() => this.props.navigation.navigate("Home")}
-            />
-          </Container>
-        </Overlay>
-        <Toast
-          ref="good"
-          style={{ backgroundColor: "rgba(34, 139, 34, 0.5)" }}
-        />
-        <Toast ref="bad" style={{ backgroundColor: "rgba(255,0,0, 0.5)" }} />
-      </View>
+          {quizArr &&
+            quizArr.map((element, index) => {
+              let arr = [...element.incorrect_answers];
+              let random = Math.floor(Math.random() * 2 - 1 + 1);
+              arr.splice(random, 0, element.correct_answer);
+              arr = shuffleArray(arr);
+
+              return (
+                index === numberQuestion && (
+                  <View key={index} style={styles.container}>
+                    <Text
+                      style={{
+                        backgroundColor: "white",
+                        padding: 8,
+                        marginBottom: 10,
+                        width: "40%",
+                        fontSize: 17,
+                        color: "black",
+                        fontWeight: "bold",
+                        borderRadius: 10,
+                        textAlign: "center",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        alignSelf: "center"
+                      }}
+                    >
+                      Question # {index + 1}
+                    </Text>
+
+                    <Text style={styles.quizQ}>{element.question}</Text>
+                    {arr.map((b, n) => {
+                      return (
+                        <TouchableOpacity
+                          key={n}
+                          onPress={() =>
+                            this.next(
+                              element.correct_answer,
+                              b,
+                              quizArr.length - 1
+                            )
+                          }
+                          style={styles.nxtBtn}
+                        >
+                          <Text style={styles.btnTxt}>{b}</Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                )
+              );
+            })}
+          <Toast
+            ref="good"
+            position="top"
+            style={{ backgroundColor: "rgba(34, 139, 34, 0.5)" }}
+          />
+          <Toast
+            ref="bad"
+            position="top"
+            style={{ backgroundColor: "rgba(255,0,0, 0.5)" }}
+          />
+          <Overlay
+            isVisible={gameFinish}
+            overlayBackgroundColor="white"
+            overlayStyle={{}}
+            onBackdropPress={() => this.props.navigation.navigate("Home")}
+          >
+            <Container>
+              <Title
+                title="Félicitations"
+                style={{ color: "rgba(34, 139, 34, 0.5)" }}
+              />
+              <Image
+                style={{
+                  width: 100,
+                  height: 100,
+                  margin: 10
+                }}
+                source={require("../../assets/happy.png")}
+              />
+              <Text style={{ margin: 5, fontSize: 15, marginBottom: 30 }}>
+                Tu as débloqué un Trophé va vite voir ton deck
+              </Text>
+              <Button
+                title="Revenir à l'accueil "
+                onPress={() => this.props.navigation.navigate("Home")}
+              />
+            </Container>
+          </Overlay>
+          {this.gameLost()}
+        </View>
+      </>
     );
   }
 }
