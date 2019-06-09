@@ -226,7 +226,7 @@ export default class Play extends Component {
             source={require("../../assets/sad.png")}
           />
           <Text style={{ margin: 10, fontSize: 15, marginBottom: 30 }}>
-            tu as un score de : {goodAnswser} sur {numberQuestion}
+            tu as un score de : {goodAnswser} sur {NBR_QUESTION_IN_QUIZZ}
           </Text>
           <Button
             title="Revenir à l'accueil "
